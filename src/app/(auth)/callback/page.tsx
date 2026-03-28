@@ -8,30 +8,47 @@ export default function AuthCallbackPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const supabase = createClient();
-    const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
-    const home = window.location.origin + base + "/";
+    const handleAuth = async () => {
+      const supabase = createClient();
+      const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
+      const home = window.location.origin + base + "/";
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event: string) => {
-        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-          // Wait for Supabase to persist session to localStorage
-          setTimeout(() => {
-            window.location.replace(home);
-          }, 500);
+      // PKCE flow: the code comes as a query parameter ?code=...
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+
+      if (code) {
+        const { error: exchangeError } =
+          await supabase.auth.exchangeCodeForSession(code);
+
+        if (exchangeError) {
+          setError(exchangeError.message);
+          return;
+        }
+
+        // Session is now in localStorage, redirect to homepage
+        window.location.replace(home);
+        return;
+      }
+
+      // Fallback: check if tokens are in hash fragment (implicit flow)
+      if (window.location.hash) {
+        // Supabase SDK with detectSessionInUrl:true handles this automatically
+        // Wait a moment for SDK to process, then check session
+        await new Promise((r) => setTimeout(r, 1000));
+
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          window.location.replace(home);
+          return;
         }
       }
-    );
 
-    // Fallback: if nothing happens after 10 seconds, show error
-    const timeout = setTimeout(() => {
-      setError("Authentication timed out. Please try again.");
-    }, 10000);
-
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timeout);
+      // No code and no hash — something went wrong
+      setError("No authentication code received. Please try again.");
     };
+
+    handleAuth();
   }, []);
 
   if (error) {
