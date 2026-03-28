@@ -159,11 +159,21 @@ export default function BrowseComponentsPage() {
 function ComponentCard({ item, index }: { item: ComponentRow; index: number }) {
   const { copied, copy } = useClipboard();
 
+  // Detect if this is a full webpage (has structural HTML tags) vs a single component
+  const html = item.code_html || item.code_tailwind || "";
+  const isFullPage = /<(header|nav|section|footer|main|article)\b/i.test(html)
+    || html.trim().toLowerCase().startsWith("<!doctype")
+    || html.trim().toLowerCase().startsWith("<html");
+
+  const bodyStyle = isFullPage
+    ? "background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif"
+    : "display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif";
+
   const srcdoc = `<!DOCTYPE html><html><head><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif}
+body{${bodyStyle}}
 ${item.code_css || ""}</style>
-${item.code_tailwind ? '<script src="https://cdn.tailwindcss.com"></script>' : ""}
-</head><body>${item.code_html || item.code_tailwind || ""}</body></html>`;
+${item.code_tailwind ? '<script src="https://cdn.tailwindcss.com"><\/script>' : ""}
+</head><body>${html}</body></html>`;
 
   const allCode = [item.code_html, item.code_css, item.code_js, item.code_tailwind]
     .filter(Boolean)

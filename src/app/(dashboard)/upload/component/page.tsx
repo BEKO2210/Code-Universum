@@ -25,6 +25,7 @@ export default function UploadComponentPage() {
   const [codeJs, setCodeJs] = useState("");
   const [codeTailwind, setCodeTailwind] = useState("");
   const [framework, setFramework] = useState<Framework>("vanilla");
+  const [isFullPage, setIsFullPage] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,20 +43,44 @@ export default function UploadComponentPage() {
     loadTags();
   }, []);
 
-  // Live preview
+  // Live preview -- full page mode renders the HTML as-is (complete webpage)
+  // Component mode centers the element in the viewport
   const previewSrcdoc = useMemo(() => {
     const tailwindCdn = codeTailwind
-      ? '<script src="https://cdn.tailwindcss.com"></script>'
+      ? '<script src="https://cdn.tailwindcss.com"><\/script>'
       : "";
+
+    // Full page mode: render the HTML directly (user provides complete page structure)
+    if (isFullPage && codeHtml) {
+      // If user provides a full HTML document, inject CSS/JS and render
+      const hasDoctype = codeHtml.trim().toLowerCase().startsWith("<!doctype") || codeHtml.trim().toLowerCase().startsWith("<html");
+      if (hasDoctype) {
+        // Inject user CSS + JS into their full document
+        const cssInject = codeCss ? `<style>${codeCss}</style>` : "";
+        const jsInject = codeJs ? `<script>${codeJs}<\/script>` : "";
+        return codeHtml.replace("</head>", `${tailwindCdn}${cssInject}</head>`).replace("</body>", `${jsInject}</body>`);
+      }
+      // No doctype but full page mode: wrap in a document without centering
+      return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+${tailwindCdn}
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif}
+${codeCss}</style></head>
+<body>${codeHtml}
+${codeJs ? `<script>${codeJs}<\/script>` : ""}</body></html>`;
+    }
+
+    // Component mode: center the element
     return `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 ${tailwindCdn}
 <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif}
 ${codeCss}</style></head>
-<body>${codeHtml || (codeTailwind ? `<div>${codeTailwind}</div>` : '<p style="color:#555">Write code to see preview</p>')}
-${codeJs ? `<script>${codeJs}</script>` : ""}</body></html>`;
-  }, [codeHtml, codeCss, codeJs, codeTailwind]);
+<body>${codeHtml || (codeTailwind ? `<div>${codeTailwind}</div>` : '<p style="color:#7b7b9a">Write code to see preview</p>')}
+${codeJs ? `<script>${codeJs}<\/script>` : ""}</body></html>`;
+  }, [codeHtml, codeCss, codeJs, codeTailwind, isFullPage]);
 
   const handleSubmit = async () => {
     if (!user) {
@@ -176,8 +201,8 @@ ${codeJs ? `<script>${codeJs}</script>` : ""}</body></html>`;
                 className="w-full px-4 py-3 rounded-xl bg-[var(--cu-surface)] border border-[var(--cu-border)] text-[var(--cu-text-primary)] text-sm placeholder:text-[var(--cu-text-muted)] outline-none focus:border-[var(--cu-neon-cyan)] transition-colors resize-none"
               />
 
-              {/* Framework */}
-              <div className="flex gap-2">
+              {/* Framework + Full Page Toggle */}
+              <div className="flex flex-wrap gap-2">
                 {FRAMEWORKS.map((fw) => (
                   <button
                     key={fw.value}
@@ -191,6 +216,18 @@ ${codeJs ? `<script>${codeJs}</script>` : ""}</body></html>`;
                     {fw.label}
                   </button>
                 ))}
+                <div className="w-px bg-[var(--cu-border)]" />
+                <button
+                  onClick={() => setIsFullPage(!isFullPage)}
+                  className={`h-8 px-3 rounded-lg text-xs font-medium border transition-all ${
+                    isFullPage
+                      ? "border-[var(--cu-neon-purple)] text-[var(--cu-neon-purple)] bg-[rgba(168,85,247,0.06)]"
+                      : "border-[var(--cu-border)] text-[var(--cu-text-secondary)] hover:border-[var(--cu-border-hover)]"
+                  }`}
+                  title="Enable for complete webpages (headers, sections, footers). Disable for single UI components."
+                >
+                  Full Page
+                </button>
               </div>
 
               {/* Code Tabs */}
