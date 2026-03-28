@@ -9,60 +9,33 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const supabase = createClient();
+    const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    const home = window.location.origin + base + "/";
 
-    const handleCallback = async () => {
-      try {
-        // Supabase handles PKCE and code exchange automatically
-        // when it detects hash fragments or code params
-        const { data, error: authError } = await supabase.auth.getSession();
-
-        if (authError) {
-          // Try code exchange if session not found yet
-          const urlParams = new URLSearchParams(window.location.search);
-          const code = urlParams.get("code");
-
-          if (code) {
-            const { error: exchangeError } =
-              await supabase.auth.exchangeCodeForSession(code);
-            if (exchangeError) {
-              setError(exchangeError.message);
-              return;
-            }
-          } else {
-            // Try hash-based tokens
-            const hashParams = new URLSearchParams(
-              window.location.hash.substring(1)
-            );
-            const accessToken = hashParams.get("access_token");
-            const refreshToken = hashParams.get("refresh_token");
-
-            if (accessToken && refreshToken) {
-              const { error: sessionError } = await supabase.auth.setSession({
-                access_token: accessToken,
-                refresh_token: refreshToken,
-              });
-              if (sessionError) {
-                setError(sessionError.message);
-                return;
-              }
-            } else {
-              setError("No authentication data received.");
-              return;
-            }
-          }
+    // Listen for the auth event — Supabase SDK automatically detects
+    // hash fragments (#access_token=...) and code params (?code=...)
+    // from the URL and processes them internally
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event: string) => {
+        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+          // Auth succeeded — redirect to homepage
+          window.location.replace(home);
         }
-
-        // Redirect to homepage
-        const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
-        window.location.replace(window.location.origin + base + "/");
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Authentication failed.");
+        if (event === "SIGNED_OUT") {
+          setError("Authentication failed. Please try again.");
+        }
       }
-    };
+    );
 
-    // Small delay to let Supabase SDK process the URL params
-    const timer = setTimeout(handleCallback, 100);
-    return () => clearTimeout(timer);
+    // Fallback: if nothing happens after 8 seconds, show error
+    const timeout = setTimeout(() => {
+      setError("Authentication timed out. Please try again.");
+    }, 8000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   if (error) {
