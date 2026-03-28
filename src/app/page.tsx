@@ -49,6 +49,7 @@ function useRecentComponents() {
     code_html: string | null;
     code_css: string | null;
     code_tailwind: string | null;
+    is_full_page: boolean;
     likes_count: number;
     profiles: { username: string; avatar_url: string | null };
   }>>([]);
@@ -60,7 +61,7 @@ function useRecentComponents() {
         const supabase = createClient();
         const { data } = await supabase
           .from("components")
-          .select("id, title, code_html, code_css, code_tailwind, likes_count, profiles!components_author_id_fkey(username, avatar_url)")
+          .select("id, title, code_html, code_css, code_tailwind, is_full_page, likes_count, profiles!components_author_id_fkey(username, avatar_url)")
           .eq("is_public", true)
           .order("created_at", { ascending: false })
           .limit(8);
@@ -118,13 +119,13 @@ const FEATURES = [
 ];
 
 const CATEGORIES = [
+  { name: "Full Webpages", icon: "M3 4a1 1 0 011-1h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm1 2v12h16V6H4z" },
   { name: "Buttons", icon: "M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" },
   { name: "Cards", icon: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" },
-  { name: "Loaders", icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" },
-  { name: "Inputs", icon: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" },
-  { name: "Toggles", icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
   { name: "Navigation", icon: "M4 6h16M4 12h16M4 18h7" },
-  { name: "Modals", icon: "M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" },
+  { name: "Forms", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
+  { name: "Loaders", icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" },
+  { name: "Landing Pages", icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" },
   { name: "Pricing", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
 ];
 
@@ -352,7 +353,12 @@ export default function Home() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                 {recentComponents.map((item, i) => {
-                  const srcdoc = `<!DOCTYPE html><html><head><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif}${item.code_css || ""}</style>${item.code_tailwind ? '<script src="https://cdn.tailwindcss.com"><\/script>' : ""}</head><body>${item.code_html || item.code_tailwind || ""}</body></html>`;
+                  const html = item.code_html || item.code_tailwind || "";
+                  const fp = item.is_full_page || /<(header|nav|section|footer|main)\b/i.test(html);
+                  const bodyCSS = fp
+                    ? "background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif"
+                    : "display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif";
+                  const srcdoc = `<!DOCTYPE html><html><head><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{${bodyCSS}}${item.code_css || ""}</style>${item.code_tailwind ? '<script src="https://cdn.tailwindcss.com"><\/script>' : ""}</head><body>${html}</body></html>`;
                   return (
                     <motion.div
                       key={item.id}
@@ -362,8 +368,13 @@ export default function Home() {
                       transition={{ duration: 0.4, delay: i * 0.05 }}
                       className="group glass overflow-hidden hover:border-[rgba(255,255,255,0.15)] transition-all duration-300"
                     >
-                      <div className="relative h-44 sm:h-48 overflow-hidden border-b border-[var(--cu-border)]">
+                      <div className={`relative overflow-hidden border-b border-[var(--cu-border)] ${fp ? "h-56 sm:h-64" : "h-44 sm:h-48"}`}>
                         <iframe srcDoc={srcdoc} sandbox="allow-scripts" className="w-full h-full border-0 pointer-events-none" title={item.title} loading="lazy" aria-hidden="true" />
+                        {fp && (
+                          <div className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded bg-[var(--cu-neon-purple)] text-[#050510]">
+                            Full Page
+                          </div>
+                        )}
                       </div>
                       <div className="p-3 sm:p-4">
                         <div className="flex items-center justify-between mb-1.5">

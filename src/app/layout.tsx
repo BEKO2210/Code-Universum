@@ -110,7 +110,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-[var(--cu-bg-primary)] text-[var(--cu-text-primary)]">
+      <body className="min-h-screen flex flex-col bg-[var(--cu-bg-primary)] text-[var(--cu-text-primary)]">
         <a href="#main-content" className="sr-only">
           Skip to content
         </a>

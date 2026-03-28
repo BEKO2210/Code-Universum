@@ -37,6 +37,7 @@ export interface Component {
   code_js: string | null;
   code_tailwind: string | null;
   framework: Framework;
+  is_full_page: boolean;
   preview_url: string | null;
   thumbnail_url: string | null;
   likes_count: number;
