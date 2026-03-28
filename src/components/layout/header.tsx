@@ -89,6 +89,8 @@ export function Header() {
                     </div>
                     <Link href="/my-components" className="block px-3 py-2 text-sm text-[var(--cu-text-secondary)] hover:text-[var(--cu-text-primary)] hover:bg-[var(--cu-surface)]">My Components</Link>
                     <Link href="/my-sites" className="block px-3 py-2 text-sm text-[var(--cu-text-secondary)] hover:text-[var(--cu-text-primary)] hover:bg-[var(--cu-surface)]">My Sites</Link>
+                    <Link href="/profile" className="block px-3 py-2 text-sm text-[var(--cu-text-secondary)] hover:text-[var(--cu-text-primary)] hover:bg-[var(--cu-surface)]">Profile</Link>
+                    <div className="mx-3 my-1 h-px bg-[var(--cu-border)]" />
                     <button onClick={handleSignOut} className="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-[var(--cu-surface)]">Sign Out</button>
                   </div>
                 </div>
@@ -180,6 +182,9 @@ export function Header() {
                   </Link>
                   <Link href="/my-sites" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 h-12 px-4 rounded-xl text-base text-[var(--cu-text-secondary)] hover:bg-[var(--cu-surface)] transition-colors">
                     My Sites
+                  </Link>
+                  <Link href="/profile" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 h-12 px-4 rounded-xl text-base text-[var(--cu-text-secondary)] hover:bg-[var(--cu-surface)] transition-colors">
+                    Profile
                   </Link>
 
                   <div className="h-px bg-[var(--cu-border)] my-2" />
