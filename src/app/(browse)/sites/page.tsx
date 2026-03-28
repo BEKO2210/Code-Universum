@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 import type { FullSite, Profile } from "@/types";
 
@@ -24,6 +24,7 @@ export default function BrowseSitesPage() {
   const { user } = useAuthStore();
 
   useEffect(() => {
+    if (!isSupabaseConfigured) { setIsLoading(false); return; }
     const load = async () => {
       const supabase = createClient();
       const { data } = await supabase

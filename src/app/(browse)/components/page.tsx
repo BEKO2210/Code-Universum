@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Tag, Component, Profile } from "@/types";
 import { useClipboard } from "@/hooks/use-clipboard";
@@ -21,6 +21,7 @@ export default function BrowseComponentsPage() {
   const { user } = useAuthStore();
 
   const loadComponents = useCallback(async () => {
+    if (!isSupabaseConfigured) { setIsLoading(false); return; }
     setIsLoading(true);
     const supabase = createClient();
 
@@ -39,7 +40,7 @@ export default function BrowseComponentsPage() {
         .eq("tags.slug", activeTag);
 
       if (taggedIds && taggedIds.length > 0) {
-        const ids = taggedIds.map((r) => r.component_id);
+        const ids = taggedIds.map((r: { component_id: string }) => r.component_id);
         query = query.in("id", ids);
       } else {
         setComponents([]);
@@ -58,6 +59,7 @@ export default function BrowseComponentsPage() {
   }, [loadComponents]);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
     const loadTags = async () => {
       const supabase = createClient();
       const { data } = await supabase.from("tags").select("*").eq("category", "type").order("name");

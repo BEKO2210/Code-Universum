@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Header } from "@/components/layout/header";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 // ============================================
 // Real stats from database
@@ -13,6 +13,7 @@ function useStats() {
   const [stats, setStats] = useState({ components: 0, sites: 0, contributors: 0 });
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
     const load = async () => {
       try {
         const supabase = createClient();
@@ -52,6 +53,7 @@ function useRecentComponents() {
   }>>([]);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
     const load = async () => {
       try {
         const supabase = createClient();

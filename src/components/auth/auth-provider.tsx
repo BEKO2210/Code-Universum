@@ -1,16 +1,20 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { setUser, setLoading } = useAuthStore();
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setUser(null);
+      return;
+    }
+
     const supabase = createClient();
 
-    // Initial session check
     const initAuth = async () => {
       try {
         const {
@@ -34,10 +38,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     initAuth();
 
-    // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event: string, session: { user: { id: string } } | null) => {
       if (event === "SIGNED_IN" && session?.user) {
         const { data: profile } = await supabase
           .from("profiles")

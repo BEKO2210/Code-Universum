@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 import { Header } from "@/components/layout/header";
 import { scanZipFile } from "@/lib/utils/security";
@@ -24,6 +24,7 @@ export default function UploadSitePage() {
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
     const loadTags = async () => {
       const supabase = createClient();
       const { data } = await supabase.from("tags").select("*").order("category").order("name");
