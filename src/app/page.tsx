@@ -49,7 +49,6 @@ function useRecentComponents() {
     code_html: string | null;
     code_css: string | null;
     code_tailwind: string | null;
-    is_full_page: boolean;
     likes_count: number;
     profiles: { username: string; avatar_url: string | null };
   }>>([]);
@@ -61,7 +60,7 @@ function useRecentComponents() {
         const supabase = createClient();
         const { data } = await supabase
           .from("components")
-          .select("id, title, code_html, code_css, code_tailwind, is_full_page, likes_count, profiles!components_author_id_fkey(username, avatar_url)")
+          .select("id, title, code_html, code_css, code_tailwind, likes_count, profiles!components_author_id_fkey(username, avatar_url)")
           .eq("is_public", true)
           .order("created_at", { ascending: false })
           .limit(8);
@@ -354,7 +353,7 @@ export default function Home() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                 {recentComponents.map((item, i) => {
                   const html = item.code_html || item.code_tailwind || "";
-                  const fp = item.is_full_page || /<(header|nav|section|footer|main)\b/i.test(html);
+                  const fp = /<(header|nav|section|footer|main)\b/i.test(html);
                   const bodyCSS = fp
                     ? "background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif"
                     : "display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif";

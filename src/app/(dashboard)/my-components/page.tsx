@@ -141,7 +141,7 @@ export default function MyComponentsPage() {
                   )}
                   <div className="flex items-center gap-3 text-xs text-[var(--cu-text-muted)]">
                     <span>{comp.framework}</span>
-                    <span>{comp.is_full_page ? "Full Page" : "Component"}</span>
+                    <span>{(comp as unknown as { is_full_page?: boolean }).is_full_page ? "Full Page" : "Component"}</span>
                     <span className={comp.is_public ? "text-[var(--cu-neon-green)]" : "text-[var(--cu-text-muted)]"}>
                       {comp.is_public ? "Public" : "Private"}
                     </span>
