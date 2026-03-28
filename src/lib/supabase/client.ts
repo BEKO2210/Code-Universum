@@ -12,7 +12,6 @@ export function createClient() {
   if (client) return client;
 
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    // Placeholder client — allows the site to render without Supabase
     client = createBrowserClient(
       "https://placeholder.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTE2MDAwMDAsImV4cCI6MjAyNzE3NjAwMH0.placeholder"
@@ -20,6 +19,13 @@ export function createClient() {
     return client;
   }
 
-  client = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  client = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      flowType: "pkce",
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+    },
+  });
   return client;
 }
