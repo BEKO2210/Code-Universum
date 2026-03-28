@@ -49,6 +49,7 @@ function useRecentComponents() {
     code_html: string | null;
     code_css: string | null;
     code_tailwind: string | null;
+    is_full_page: boolean;
     likes_count: number;
     profiles: { username: string; avatar_url: string | null };
   }>>([]);
@@ -60,7 +61,7 @@ function useRecentComponents() {
         const supabase = createClient();
         const { data } = await supabase
           .from("components")
-          .select("id, title, code_html, code_css, code_tailwind, likes_count, profiles!components_author_id_fkey(username, avatar_url)")
+          .select("id, title, code_html, code_css, code_tailwind, is_full_page, likes_count, profiles!components_author_id_fkey(username, avatar_url)")
           .eq("is_public", true)
           .order("created_at", { ascending: false })
           .limit(8);
@@ -352,7 +353,12 @@ export default function Home() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                 {recentComponents.map((item, i) => {
-                  const srcdoc = `<!DOCTYPE html><html><head><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif}${item.code_css || ""}</style>${item.code_tailwind ? '<script src="https://cdn.tailwindcss.com"><\/script>' : ""}</head><body>${item.code_html || item.code_tailwind || ""}</body></html>`;
+                  const html = item.code_html || item.code_tailwind || "";
+                  const fp = item.is_full_page || /<(header|nav|section|footer|main)\b/i.test(html);
+                  const bodyCSS = fp
+                    ? "background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif"
+                    : "display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif";
+                  const srcdoc = `<!DOCTYPE html><html><head><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{${bodyCSS}}${item.code_css || ""}</style>${item.code_tailwind ? '<script src="https://cdn.tailwindcss.com"><\/script>' : ""}</head><body>${html}</body></html>`;
                   return (
                     <motion.div
                       key={item.id}
@@ -362,8 +368,13 @@ export default function Home() {
                       transition={{ duration: 0.4, delay: i * 0.05 }}
                       className="group glass overflow-hidden hover:border-[rgba(255,255,255,0.15)] transition-all duration-300"
                     >
-                      <div className="relative h-44 sm:h-48 overflow-hidden border-b border-[var(--cu-border)]">
+                      <div className={`relative overflow-hidden border-b border-[var(--cu-border)] ${fp ? "h-56 sm:h-64" : "h-44 sm:h-48"}`}>
                         <iframe srcDoc={srcdoc} sandbox="allow-scripts" className="w-full h-full border-0 pointer-events-none" title={item.title} loading="lazy" aria-hidden="true" />
+                        {fp && (
+                          <div className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded bg-[var(--cu-neon-purple)] text-[#050510]">
+                            Full Page
+                          </div>
+                        )}
                       </div>
                       <div className="p-3 sm:p-4">
                         <div className="flex items-center justify-between mb-1.5">

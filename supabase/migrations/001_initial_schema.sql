@@ -42,6 +42,7 @@ CREATE TABLE public.components (
   code_tailwind TEXT,
   framework TEXT NOT NULL DEFAULT 'vanilla'
     CHECK (framework IN ('vanilla', 'react', 'vue', 'svelte')),
+  is_full_page BOOLEAN NOT NULL DEFAULT false,
   preview_url TEXT,
   thumbnail_url TEXT,
   likes_count INTEGER NOT NULL DEFAULT 0,
@@ -50,6 +51,8 @@ CREATE TABLE public.components (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE INDEX idx_components_full_page ON public.components(is_full_page) WHERE is_full_page = true;
 
 -- ============================================
 -- FULL SITES (ZIP uploads)

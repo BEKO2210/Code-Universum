@@ -159,9 +159,9 @@ export default function BrowseComponentsPage() {
 function ComponentCard({ item, index }: { item: ComponentRow; index: number }) {
   const { copied, copy } = useClipboard();
 
-  // Detect if this is a full webpage (has structural HTML tags) vs a single component
+  // Use DB flag first, fallback to auto-detection
   const html = item.code_html || item.code_tailwind || "";
-  const isFullPage = /<(header|nav|section|footer|main|article)\b/i.test(html)
+  const isFullPage = item.is_full_page || /<(header|nav|section|footer|main|article)\b/i.test(html)
     || html.trim().toLowerCase().startsWith("<!doctype")
     || html.trim().toLowerCase().startsWith("<html");
 
@@ -210,14 +210,21 @@ ${item.code_tailwind ? '<script src="https://cdn.tailwindcss.com"><\/script>' : 
       className="group glass overflow-hidden hover:border-[rgba(255,255,255,0.15)] transition-all duration-300"
     >
       {/* Preview */}
-      <div className="relative h-44 overflow-hidden border-b border-[var(--cu-border)]">
+      <div className={`relative overflow-hidden border-b border-[var(--cu-border)] ${isFullPage ? "h-56 sm:h-64" : "h-44"}`}>
         <iframe
           srcDoc={srcdoc}
           sandbox="allow-scripts"
           className="w-full h-full border-0 pointer-events-none"
           title={item.title}
           loading="lazy"
+          aria-hidden="true"
         />
+        {/* Full Page Badge */}
+        {isFullPage && (
+          <div className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded bg-[var(--cu-neon-purple)] text-[#050510]">
+            Full Page
+          </div>
+        )}
         {/* Overlay actions */}
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--cu-bg-primary)] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3 gap-2">
           <button

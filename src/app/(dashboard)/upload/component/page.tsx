@@ -114,6 +114,7 @@ ${codeJs ? `<script>${codeJs}<\/script>` : ""}</body></html>`;
           code_js: codeJs || null,
           code_tailwind: codeTailwind || null,
           framework,
+          is_full_page: isFullPage,
         })
         .select()
         .single();
