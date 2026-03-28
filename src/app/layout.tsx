@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
+import { AuthProvider } from "@/components/auth/auth-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Code Universum — UI Component & Website Sharing Platform",
+  title: "Code Universum — Open-Source UI Component Library",
   description:
-    "Discover, share, and preview beautiful UI components and full websites. Upload HTML, CSS, Tailwind, React snippets or entire projects with live in-browser rendering.",
-  keywords: [
-    "UI components",
-    "web design",
-    "tailwind",
-    "react components",
-    "code sharing",
-    "live preview",
-  ],
+    "Upload, discover and preview UI components with live rendering. Share HTML, CSS, Tailwind and React snippets with the developer community.",
 };
 
 export default function RootLayout({
@@ -23,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased dark">
       <body className="min-h-full flex flex-col bg-[var(--cu-bg-primary)] text-[var(--cu-text-primary)]">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
