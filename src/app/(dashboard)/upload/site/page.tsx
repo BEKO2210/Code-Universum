@@ -137,7 +137,7 @@ export default function UploadSitePage() {
   return (
     <>
       <Header />
-      <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <h1 className="text-2xl font-bold text-[var(--cu-text-primary)] mb-8">Upload Full Site</h1>
 
@@ -163,7 +163,7 @@ export default function UploadSitePage() {
               onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
-              className={`relative border-2 border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer ${
+              className={`relative border-2 border-dashed rounded-2xl p-6 sm:p-10 text-center transition-all cursor-pointer ${
                 isDragging
                   ? "border-[var(--cu-neon-cyan)] bg-[rgba(0,240,255,0.03)]"
                   : file
