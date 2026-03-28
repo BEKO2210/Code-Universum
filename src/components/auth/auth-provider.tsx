@@ -17,15 +17,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const initAuth = async () => {
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const { data: { session } } = await supabase.auth.getSession();
 
-        if (user) {
+        if (session?.user) {
           const { data: profile } = await supabase
             .from("profiles")
             .select("*")
-            .eq("id", user.id)
+            .eq("id", session.user.id)
             .single();
           setUser(profile);
         } else {
@@ -38,10 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     initAuth();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(
-      async (_event: string, session: { user: { id: string } } | null) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
         try {
           if (session?.user) {
             const { data: profile } = await supabase

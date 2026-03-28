@@ -8,47 +8,42 @@ export default function AuthCallbackPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleAuth = async () => {
-      const supabase = createClient();
-      const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
-      const home = window.location.origin + base + "/";
+    const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    const home = window.location.origin + base + "/";
+    const supabase = createClient();
 
-      // PKCE flow: the code comes as a query parameter ?code=...
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get("code");
+    // With detectSessionInUrl:true and flowType:"pkce",
+    // the Supabase SDK automatically detects the ?code= param
+    // and exchanges it for a session. We just need to wait for it.
+    const checkSession = async () => {
+      // Give the SDK time to process the URL and exchange the code
+      await new Promise((r) => setTimeout(r, 1500));
 
-      if (code) {
-        const { error: exchangeError } =
-          await supabase.auth.exchangeCodeForSession(code);
+      const { data, error: sessionError } = await supabase.auth.getSession();
 
-        if (exchangeError) {
-          setError(exchangeError.message);
-          return;
-        }
+      if (sessionError) {
+        setError(sessionError.message);
+        return;
+      }
 
-        // Session is now in localStorage, redirect to homepage
+      if (data.session) {
         window.location.replace(home);
         return;
       }
 
-      // Fallback: check if tokens are in hash fragment (implicit flow)
-      if (window.location.hash) {
-        // Supabase SDK with detectSessionInUrl:true handles this automatically
-        // Wait a moment for SDK to process, then check session
-        await new Promise((r) => setTimeout(r, 1000));
+      // If no session yet, try one more time after a longer delay
+      await new Promise((r) => setTimeout(r, 2000));
+      const { data: retryData } = await supabase.auth.getSession();
 
-        const { data } = await supabase.auth.getSession();
-        if (data.session) {
-          window.location.replace(home);
-          return;
-        }
+      if (retryData.session) {
+        window.location.replace(home);
+        return;
       }
 
-      // No code and no hash — something went wrong
-      setError("No authentication code received. Please try again.");
+      setError("Could not complete sign in. Please try again.");
     };
 
-    handleAuth();
+    checkSession();
   }, []);
 
   if (error) {
