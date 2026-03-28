@@ -16,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased dark">
       <body className="min-h-full flex flex-col bg-[var(--cu-bg-primary)] text-[var(--cu-text-primary)]">
+        <a href="#main-content" className="sr-only">Skip to content</a>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

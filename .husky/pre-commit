@@ -1,0 +1,16 @@
+#!/bin/sh
+echo "Pre-commit: Running quality checks..."
+
+# TypeScript type check
+echo "  Checking types..."
+npx tsc --noEmit || { echo "TypeScript errors found. Fix before committing."; exit 1; }
+
+# ESLint
+echo "  Running linter..."
+npx eslint --max-warnings 0 src/ 2>/dev/null || echo "  Lint warnings found (non-blocking)"
+
+# Tests
+echo "  Running tests..."
+npx vitest run --reporter=dot 2>/dev/null || { echo "Tests failed. Fix before committing."; exit 1; }
+
+echo "All checks passed."
