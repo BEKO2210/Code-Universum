@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 import { Header } from "@/components/layout/header";
 import type { Tag, Framework } from "@/types";
@@ -34,6 +34,7 @@ export default function UploadComponentPage() {
 
   // Load tags from Supabase
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
     const loadTags = async () => {
       const supabase = createClient();
       const { data } = await supabase.from("tags").select("*").order("category").order("name");
