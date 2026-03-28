@@ -1,114 +1,249 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { createClient } from "@/lib/supabase/client";
+import { useAuthStore } from "@/stores/auth-store";
+import type { Tag, Component, Profile } from "@/types";
+import { useClipboard } from "@/hooks/use-clipboard";
 
-const SAMPLE_COMPONENTS = [
-  {
-    id: "1", title: "Neon Pulse Button", author: "CodeUniverse", likes: 342, category: "Button",
-    html: `<button style="padding:14px 32px;font-size:15px;font-weight:600;color:#00f0ff;background:transparent;border:2px solid #00f0ff;border-radius:12px;cursor:pointer;font-family:system-ui;letter-spacing:.5px">Hover Me</button>`,
-  },
-  {
-    id: "2", title: "Glass Profile Card", author: "DesignPro", likes: 518, category: "Card",
-    html: `<div style="padding:28px;background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;text-align:center;color:#f0f0f5;font-family:system-ui;width:180px"><div style="font-size:28px;margin-bottom:8px">&#9830;</div><div style="font-weight:700;font-size:16px">Premium</div><div style="font-size:12px;color:#8888aa;margin-top:4px">Glass card</div></div>`,
-  },
-  {
-    id: "3", title: "Gradient Badge Set", author: "BadgeUI", likes: 156, category: "Badge",
-    html: `<div style="display:flex;gap:8px"><span style="padding:6px 16px;font-size:11px;font-weight:700;color:white;border-radius:50px;background:linear-gradient(135deg,#00f0ff,#a855f7);font-family:system-ui">New</span><span style="padding:6px 16px;font-size:11px;font-weight:700;color:white;border-radius:50px;background:linear-gradient(135deg,#a855f7,#ec4899);font-family:system-ui">Pro</span></div>`,
-  },
-  {
-    id: "4", title: "Floating Input", author: "FormCraft", likes: 231, category: "Input",
-    html: `<div style="font-family:system-ui;color:#f0f0f5"><input style="width:200px;padding:12px 0 6px;font-size:14px;background:transparent;border:none;border-bottom:2px solid rgba(255,255,255,0.15);color:#f0f0f5;outline:none" placeholder="Enter email..." /></div>`,
-  },
-  {
-    id: "5", title: "Orbit Loader", author: "AnimateUI", likes: 267, category: "Loader",
-    html: `<style>.ring{position:absolute;inset:0;border:3px solid transparent;border-top-color:#00f0ff;border-radius:50%;animation:s 1.2s linear infinite}.r2{inset:8px;border-top-color:#a855f7;animation-duration:.8s;animation-direction:reverse}@keyframes s{to{transform:rotate(360deg)}}</style><div style="position:relative;width:50px;height:50px"><div class="ring"></div><div class="ring r2"></div><div style="position:absolute;top:50%;left:50%;width:6px;height:6px;background:#ec4899;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 10px #ec4899"></div></div>`,
-  },
-  {
-    id: "6", title: "Neon Toggle", author: "SwitchMaster", likes: 189, category: "Toggle",
-    html: `<style>.ts{position:relative;width:52px;height:28px;display:inline-block}.ts input{opacity:0;width:0;height:0}.sl{position:absolute;inset:0;background:#1a1a2e;border-radius:28px;cursor:pointer;transition:.3s;border:1px solid rgba(255,255,255,0.1)}.sl:before{content:"";position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#555;border-radius:50%;transition:.3s}.ts input:checked+.sl{background:rgba(0,240,255,0.15);border-color:#00f0ff}.ts input:checked+.sl:before{transform:translateX(24px);background:#00f0ff;box-shadow:0 0 10px rgba(0,240,255,0.6)}</style><label class="ts"><input type="checkbox" checked /><span class="sl"></span></label>`,
-  },
-];
+interface ComponentRow extends Component {
+  profiles: Pick<Profile, "username" | "avatar_url">;
+  component_tags: { tags: Pick<Tag, "id" | "name" | "slug"> }[];
+}
 
 export default function BrowseComponentsPage() {
+  const [components, setComponents] = useState<ComponentRow[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuthStore();
+
+  const loadComponents = useCallback(async () => {
+    setIsLoading(true);
+    const supabase = createClient();
+
+    let query = supabase
+      .from("components")
+      .select("*, profiles!components_author_id_fkey(username, avatar_url), component_tags(tags(id, name, slug))")
+      .eq("is_public", true)
+      .order("created_at", { ascending: false })
+      .limit(30);
+
+    if (activeTag) {
+      // Filter by tag requires a join approach
+      const { data: taggedIds } = await supabase
+        .from("component_tags")
+        .select("component_id, tags!inner(slug)")
+        .eq("tags.slug", activeTag);
+
+      if (taggedIds && taggedIds.length > 0) {
+        const ids = taggedIds.map((r) => r.component_id);
+        query = query.in("id", ids);
+      } else {
+        setComponents([]);
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    const { data } = await query;
+    setComponents((data as unknown as ComponentRow[]) || []);
+    setIsLoading(false);
+  }, [activeTag]);
+
+  useEffect(() => {
+    loadComponents();
+  }, [loadComponents]);
+
+  useEffect(() => {
+    const loadTags = async () => {
+      const supabase = createClient();
+      const { data } = await supabase.from("tags").select("*").eq("category", "type").order("name");
+      if (data) setTags(data);
+    };
+    loadTags();
+  }, []);
+
   return (
     <main className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--cu-text-primary)] mb-2">
-              Components
-            </h1>
+            <h1 className="text-3xl font-bold text-[var(--cu-text-primary)] mb-2">Components</h1>
             <p className="text-sm text-[var(--cu-text-secondary)]">
-              Browse 4,300+ open-source UI elements
+              Open-source UI elements — copy the code with one click
             </p>
           </div>
-          <Link
-            href="/upload/component"
-            className="hidden sm:inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-gradient-to-r from-[var(--cu-neon-cyan)] to-[rgba(0,240,255,0.8)] text-[#050510] font-semibold text-sm transition-all duration-300 hover:shadow-[var(--cu-glow-cyan)]"
-          >
-            Submit
-          </Link>
+          {user && (
+            <Link
+              href="/upload/component"
+              className="hidden sm:inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-gradient-to-r from-[var(--cu-neon-cyan)] to-[rgba(0,240,255,0.8)] text-[#050510] font-semibold text-sm"
+            >
+              + Upload
+            </Link>
+          )}
         </div>
 
         {/* Filter pills */}
         <div className="flex flex-wrap gap-2 mb-8">
-          {["All", "Buttons", "Cards", "Inputs", "Loaders", "Toggles", "Badges"].map((cat, i) => (
+          <button
+            onClick={() => setActiveTag(null)}
+            className={`h-8 px-4 rounded-lg text-xs font-medium border transition-all ${
+              !activeTag
+                ? "border-[var(--cu-neon-cyan)] text-[var(--cu-neon-cyan)] bg-[rgba(0,240,255,0.06)]"
+                : "border-[var(--cu-border)] text-[var(--cu-text-secondary)] hover:border-[var(--cu-border-hover)]"
+            }`}
+          >
+            All
+          </button>
+          {tags.map((tag) => (
             <button
-              key={cat}
+              key={tag.id}
+              onClick={() => setActiveTag(tag.slug === activeTag ? null : tag.slug)}
               className={`h-8 px-4 rounded-lg text-xs font-medium border transition-all ${
-                i === 0
+                activeTag === tag.slug
                   ? "border-[var(--cu-neon-cyan)] text-[var(--cu-neon-cyan)] bg-[rgba(0,240,255,0.06)]"
                   : "border-[var(--cu-border)] text-[var(--cu-text-secondary)] hover:border-[var(--cu-border-hover)]"
               }`}
             >
-              {cat}
+              {tag.name}
             </button>
           ))}
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {SAMPLE_COMPONENTS.map((item, i) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="group glass overflow-hidden hover:border-[rgba(255,255,255,0.15)] transition-all duration-300"
+        {/* Loading state */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="glass overflow-hidden animate-pulse">
+                <div className="h-44 bg-[var(--cu-surface)]" />
+                <div className="p-4 space-y-2">
+                  <div className="h-4 bg-[var(--cu-surface)] rounded w-2/3" />
+                  <div className="h-3 bg-[var(--cu-surface)] rounded w-1/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : components.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="text-4xl mb-4">&#128640;</div>
+            <h2 className="text-lg font-semibold text-[var(--cu-text-primary)] mb-2">
+              No components yet
+            </h2>
+            <p className="text-sm text-[var(--cu-text-secondary)] mb-6">
+              Be the first to share a UI component!
+            </p>
+            <Link
+              href="/upload/component"
+              className="inline-flex items-center h-10 px-6 rounded-xl border border-[var(--cu-neon-cyan)] text-[var(--cu-neon-cyan)] text-sm font-medium hover:shadow-[var(--cu-glow-cyan)] transition-all"
             >
-              <div className="relative h-44 overflow-hidden border-b border-[var(--cu-border)]">
-                <iframe
-                  srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;margin:0">${item.html}</body></html>`}
-                  sandbox="allow-scripts"
-                  className="w-full h-full border-0 pointer-events-none"
-                  title={item.title}
-                  loading="lazy"
-                />
-              </div>
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-1.5">
-                  <h3 className="text-sm font-semibold text-[var(--cu-text-primary)] truncate">
-                    {item.title}
-                  </h3>
-                  <span className="flex items-center gap-1 text-xs text-[var(--cu-text-muted)]">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
-                    {item.likes}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-[var(--cu-text-secondary)]">by {item.author}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full border border-[var(--cu-border)] text-[var(--cu-text-muted)]">{item.category}</span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              Upload Component
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {components.map((item, i) => (
+              <ComponentCard key={item.id} item={item} index={i} />
+            ))}
+          </div>
+        )}
       </motion.div>
     </main>
+  );
+}
+
+function ComponentCard({ item, index }: { item: ComponentRow; index: number }) {
+  const { copied, copy } = useClipboard();
+
+  const srcdoc = `<!DOCTYPE html><html><head><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif}
+${item.code_css || ""}</style>
+${item.code_tailwind ? '<script src="https://cdn.tailwindcss.com"></script>' : ""}
+</head><body>${item.code_html || item.code_tailwind || ""}</body></html>`;
+
+  const allCode = [item.code_html, item.code_css, item.code_js, item.code_tailwind]
+    .filter(Boolean)
+    .join("\n\n");
+
+  const handleLike = async () => {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Toggle like
+    const { data: existing } = await supabase
+      .from("likes")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("content_type", "component")
+      .eq("content_id", item.id)
+      .single();
+
+    if (existing) {
+      await supabase.from("likes").delete().eq("id", existing.id);
+      await supabase.from("components").update({ likes_count: Math.max(0, item.likes_count - 1) }).eq("id", item.id);
+    } else {
+      await supabase.from("likes").insert({ user_id: user.id, content_type: "component", content_id: item.id });
+      await supabase.from("components").update({ likes_count: item.likes_count + 1 }).eq("id", item.id);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.04 }}
+      className="group glass overflow-hidden hover:border-[rgba(255,255,255,0.15)] transition-all duration-300"
+    >
+      {/* Preview */}
+      <div className="relative h-44 overflow-hidden border-b border-[var(--cu-border)]">
+        <iframe
+          srcDoc={srcdoc}
+          sandbox="allow-scripts"
+          className="w-full h-full border-0 pointer-events-none"
+          title={item.title}
+          loading="lazy"
+        />
+        {/* Overlay actions */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--cu-bg-primary)] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3 gap-2">
+          <button
+            onClick={() => copy(allCode)}
+            className="px-3 py-1.5 text-xs font-medium rounded-full border transition-all bg-[rgba(0,0,0,0.6)] backdrop-blur-sm border-[var(--cu-neon-cyan)] text-[var(--cu-neon-cyan)] hover:bg-[rgba(0,240,255,0.1)]"
+          >
+            {copied ? "Copied!" : "Copy Code"}
+          </button>
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-semibold text-[var(--cu-text-primary)] truncate">{item.title}</h3>
+          <button onClick={handleLike} className="flex items-center gap-1 text-xs text-[var(--cu-text-muted)] hover:text-red-400 transition-colors">
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            {item.likes_count}
+          </button>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {item.profiles?.avatar_url && (
+              <img src={item.profiles.avatar_url} alt="" className="w-4 h-4 rounded-full" />
+            )}
+            <span className="text-xs text-[var(--cu-text-secondary)]">{item.profiles?.username || "Anonymous"}</span>
+          </div>
+          <div className="flex gap-1">
+            {item.component_tags?.slice(0, 2).map((ct) => (
+              <span key={ct.tags.id} className="text-[10px] px-2 py-0.5 rounded-full border border-[var(--cu-border)] text-[var(--cu-text-muted)]">
+                {ct.tags.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
