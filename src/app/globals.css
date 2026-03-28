@@ -17,7 +17,7 @@
   /* Text */
   --cu-text-primary: #f0f0f5;
   --cu-text-secondary: #8888aa;
-  --cu-text-muted: #555570;
+  --cu-text-muted: #7b7b9a;
 
   /* Neon accents */
   --cu-neon-cyan: #00f0ff;
@@ -244,6 +244,34 @@ button, [role="button"], nav {
   border-radius: var(--cu-radius-md);
   font-size: 14px;
   font-weight: 600;
+}
+
+/* CSS-only animations for above-the-fold (avoids Framer Motion LCP blocking) */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease both;
+}
+
+.animate-delay-100 { animation-delay: 100ms; }
+.animate-delay-200 { animation-delay: 200ms; }
+.animate-delay-300 { animation-delay: 300ms; }
+
+/* GPU-accelerated transforms (UI/UX Pro Max: will-change) */
+.glass, .glass-subtle {
+  will-change: transform;
 }
 
 /* Line clamp utility */

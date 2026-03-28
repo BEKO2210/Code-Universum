@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/layout/header";
+
+export const metadata: Metadata = {
+  title: "Impressum",
+  description: "Impressum (Legal Notice) for Code Universum. MIT Licensed open-source project by Belkis Aslani.",
+  alternates: { canonical: "https://beko2210.github.io/Code-Universum/impressum" },
+};
 
 export default function ImpressumPage() {
   return (

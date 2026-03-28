@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/layout/header";
+
+export const metadata: Metadata = {
+  title: "Terms of Use",
+  description: "Terms of Use for Code Universum — the open-source UI component sharing platform.",
+  alternates: { canonical: "https://beko2210.github.io/Code-Universum/terms" },
+};
 
 export default function TermsPage() {
   return (

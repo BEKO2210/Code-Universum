@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/layout/header";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "Privacy Policy for Code Universum. GDPR-compliant, essential cookies only.",
+  alternates: { canonical: "https://beko2210.github.io/Code-Universum/privacy" },
+};
 
 export default function PrivacyPage() {
   return (
