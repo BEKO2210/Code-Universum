@@ -1,0 +1,22 @@
+{
+  "name": "Code Universum",
+  "short_name": "CodeUniversum",
+  "description": "Open-Source UI Component & Website Sharing Platform",
+  "start_url": "/Code-Universum/",
+  "scope": "/Code-Universum/",
+  "display": "standalone",
+  "background_color": "#050510",
+  "theme_color": "#050510",
+  "icons": [
+    {
+      "src": "/Code-Universum/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/Code-Universum/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml"
+    }
+  ]
+}

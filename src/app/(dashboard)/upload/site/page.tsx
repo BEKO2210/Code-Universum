@@ -142,7 +142,9 @@ export default function UploadSitePage() {
           <h1 className="text-2xl font-bold text-[var(--cu-text-primary)] mb-8">Upload Full Site</h1>
 
           <div className="flex flex-col gap-5">
+            <label htmlFor="site-title" className="sr-only">Site title</label>
             <input
+              id="site-title"
               type="text"
               placeholder="Site title *"
               value={title}

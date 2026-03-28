@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="g1" cx="20%" cy="80%"><stop offset="0%" stop-color="rgba(0,240,255,0.15)"/><stop offset="70%" stop-color="transparent"/></radialGradient>
+    <radialGradient id="g2" cx="80%" cy="20%"><stop offset="0%" stop-color="rgba(168,85,247,0.15)"/><stop offset="70%" stop-color="transparent"/></radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#050510"/>
+  <rect width="1200" height="630" fill="url(#g1)"/>
+  <rect width="1200" height="630" fill="url(#g2)"/>
+  <text x="600" y="260" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="900" font-size="72" fill="#00f0ff">Code</text>
+  <text x="600" y="340" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="900" font-size="72" fill="#f0f0f5">Universum</text>
+  <text x="600" y="420" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="400" font-size="28" fill="#8888aa">Open-Source UI Component Library</text>
+  <rect x="400" y="470" width="400" height="50" rx="25" fill="none" stroke="#00f0ff" stroke-width="2"/>
+  <text x="600" y="502" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="600" font-size="18" fill="#00f0ff">Share Your UI with the World</text>
+</svg>

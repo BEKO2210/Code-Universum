@@ -1,6 +1,6 @@
 # Code-Universum — Project Memory
 
-## Status: Phase 2 — Mobile-First + Real Backend Integration
+## Status: Phase 3 — SEO & Lighthouse Optimized, Production-Ready
 Last updated: 2026-03-28
 
 ## Architecture Decisions
@@ -82,7 +82,23 @@ Last updated: 2026-03-28
 - [x] SETUP.md guide for Supabase + GitHub setup
 - [x] Graceful degradation without Supabase
 - [x] Mobile-first responsive design (all pages)
+- [x] SEO: robots.txt, sitemap.xml, OG tags, Twitter Cards, JSON-LD
+- [x] Lighthouse: CSS animations for LCP, contrast fix, aria-labels
+- [x] PWA manifest, favicon.svg, apple-touch-icon, og-image
+- [x] Per-page metadata (unique title/description/canonical on every route)
+- [x] Accessibility: focus-visible, skip-to-content, reduced-motion, 4.5:1 contrast
 - [ ] WebContainer live preview for full sites
 - [ ] User profile page
 - [ ] Search functionality
 - [ ] Code syntax highlighting (shiki)
+
+## SEO & Lighthouse Decisions (Phase 3)
+| What | Choice | Why |
+|---|---|---|
+| Above-fold animation | CSS @keyframes | Framer Motion blocks LCP |
+| Muted text color | #7b7b9a (was #555570) | WCAG AA 4.5:1 contrast |
+| OG image | SVG (1200x630) | No build tooling needed |
+| Favicon | SVG with "CU" letters | Scales to any size |
+| Structured Data | JSON-LD WebApplication | Google rich snippets |
+| Sitemap | Static XML in public/ | output:export compatible |
+| Metadata | Next.js Metadata API + layout wrappers | Unique per page |

@@ -161,7 +161,9 @@ ${codeJs ? `<script>${codeJs}</script>` : ""}</body></html>`;
             {/* Left: Code Editor */}
             <div className="flex flex-col gap-4">
               {/* Title */}
+              <label htmlFor="comp-title" className="sr-only">Component title</label>
               <input
+                id="comp-title"
                 type="text"
                 placeholder="Component title *"
                 value={title}
@@ -170,7 +172,9 @@ ${codeJs ? `<script>${codeJs}</script>` : ""}</body></html>`;
               />
 
               {/* Description */}
+              <label htmlFor="comp-desc" className="sr-only">Description</label>
               <textarea
+                id="comp-desc"
                 placeholder="Short description (optional)"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}

@@ -99,17 +99,13 @@ export default function Home() {
       <BackgroundOrbs />
       <Header />
 
-      <div className="relative z-10">
-        {/* ======== HERO ======== */}
+      <div className="relative z-10" id="main-content">
+        {/* ======== HERO (CSS animations — no Framer Motion for LCP) ======== */}
         <section className="relative pt-12 pb-10 sm:pt-32 sm:pb-24 px-4 sm:px-6">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            >
+            <div className="animate-fade-in-up">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[var(--cu-border)] text-xs text-[var(--cu-text-secondary)] mb-8">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--cu-neon-green)] animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--cu-neon-green)] animate-pulse" aria-hidden="true" />
                 Open Source — MIT Licensed
               </div>
 
@@ -127,18 +123,13 @@ export default function Home() {
                 Upload UI components and full websites. Preview them live in the browser.
                 Copy the code with a single click — free and open source.
               </p>
-            </motion.div>
+            </div>
 
             {/* Search */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.15 }}
-              className="max-w-xl mx-auto mb-6"
-            >
-              <Link href="/components" className="block group">
+            <div className="animate-fade-in-up animate-delay-100 max-w-xl mx-auto mb-6">
+              <Link href="/components" className="block group" aria-label="Search components">
                 <div className="relative flex items-center glass border-[var(--cu-border)] group-hover:border-[rgba(0,240,255,0.2)] transition-colors">
-                  <svg className="w-5 h-5 ml-4 text-[var(--cu-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 ml-4 text-[var(--cu-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <span className="w-full px-4 py-4 text-sm text-[var(--cu-text-muted)]">
@@ -146,15 +137,10 @@ export default function Home() {
                   </span>
                 </div>
               </Link>
-            </motion.div>
+            </div>
 
             {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="flex flex-wrap items-center justify-center gap-4"
-            >
+            <div className="animate-fade-in animate-delay-200 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href="/components"
                 className="inline-flex items-center gap-2 h-12 px-8 rounded-xl bg-gradient-to-r from-[var(--cu-neon-cyan)] to-[rgba(0,240,255,0.8)] text-[#050510] font-semibold text-sm transition-all hover:shadow-[var(--cu-glow-cyan)] hover:scale-[1.02]"
@@ -170,7 +156,7 @@ export default function Home() {
               >
                 Upload Your Code
               </Link>
-            </motion.div>
+            </div>
           </div>
         </section>
 
