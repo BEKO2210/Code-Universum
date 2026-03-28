@@ -5,10 +5,10 @@ export default function ImpressumPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 max-w-3xl mx-auto px-6 py-12">
-        <h1 className="text-3xl font-bold text-[var(--cu-text-primary)] mb-8">Impressum</h1>
+      <main className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--cu-text-primary)] mb-6 sm:mb-8">Impressum</h1>
 
-        <div className="space-y-6 text-sm text-[var(--cu-text-secondary)] leading-relaxed">
+        <div className="space-y-4 sm:space-y-6 text-sm text-[var(--cu-text-secondary)] leading-relaxed">
           <section>
             <h2 className="text-lg font-semibold text-[var(--cu-text-primary)] mb-3">Angaben gem. &sect; 5 TMG</h2>
             <p>

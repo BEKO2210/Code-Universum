@@ -40,11 +40,11 @@ export default function BrowseSitesPage() {
   }, []);
 
   return (
-    <main className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full">
+    <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--cu-text-primary)] mb-2">Full Sites</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--cu-text-primary)] mb-1 sm:mb-2">Full Sites</h1>
             <p className="text-sm text-[var(--cu-text-secondary)]">
               Complete website projects — preview them live in your browser
             </p>
@@ -60,7 +60,7 @@ export default function BrowseSitesPage() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="glass overflow-hidden animate-pulse">
                 <div className="h-56 bg-[var(--cu-surface)]" />
@@ -84,7 +84,7 @@ export default function BrowseSitesPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {sites.map((site, i) => {
               const color = TYPE_COLORS[site.project_type] || "#00f0ff";
               return (

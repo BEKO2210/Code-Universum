@@ -34,7 +34,7 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="glass p-8 w-full max-w-sm flex flex-col gap-6 items-center"
+        className="glass p-5 sm:p-8 w-full max-w-sm flex flex-col gap-5 sm:gap-6 items-center"
       >
         {/* Logo */}
         <Link href="/" className="text-center">

@@ -1,6 +1,6 @@
 # Code-Universum — Project Memory
 
-## Status: Phase 1 — Architecture & Initial Scaffold
+## Status: Phase 2 — Mobile-First + Real Backend Integration
 Last updated: 2026-03-28
 
 ## Architecture Decisions
@@ -15,6 +15,9 @@ Last updated: 2026-03-28
 | ZIP extraction | JSZip (client-side) | No server compute needed |
 | WebContainer | Singleton per tab | Only 1 instance allowed per browser tab |
 | Mobile fallback | Screenshot preview | No SharedArrayBuffer on mobile |
+| Hosting | GitHub Pages (static export) | Free, auto-deploy via Actions |
+| Graceful degradation | Placeholder Supabase client | Site works without backend |
+| Mobile nav | Hamburger menu + fullscreen overlay | Touch-first, 44px+ targets |
 
 ## Database Schema
 - See: `supabase/migrations/001_initial_schema.sql`
@@ -22,39 +25,46 @@ Last updated: 2026-03-28
 - All tables have RLS enabled
 - Auto-profile creation on auth.users insert
 - Auto updated_at triggers on profiles, components, full_sites
+- 28 seed tags in 3 categories (type, framework, style)
 
 ## API Routes (Supabase Edge Functions)
 | Function | Path | Purpose |
 |---|---|---|
-| process-upload | /functions/v1/process-upload | Validate ZIP, extract metadata, detect project type |
-| scan-code | /functions/v1/scan-code | Security scan uploaded code before DB insert |
+| process-upload | /functions/v1/process-upload | Validate ZIP, extract metadata |
+| scan-code | /functions/v1/scan-code | Security scan uploaded code |
 
-## Next.js API Routes
-| Route | Purpose |
-|---|---|
-| /api/preview/snippet | Server-side render snippet for OG images |
+## Pages
+| Route | Type | Description |
+|---|---|---|
+| / | Homepage | Hero, stats from DB, recent components grid |
+| /components | Browse | Grid with tag filters, likes, copy code |
+| /sites | Browse | Full site cards with type badges |
+| /upload/component | Dashboard | Code editor with live preview, tag selector |
+| /upload/site | Dashboard | ZIP drag-and-drop with security scan |
+| /login | Auth | GitHub OAuth |
+| /callback | Auth | OAuth redirect handler (client-side) |
+| /terms | Legal | Terms of Use |
+| /privacy | Legal | Privacy Policy (GDPR) |
+| /impressum | Legal | Impressum with MIT license |
 
 ## Key Technical Notes
-- COOP/COEP headers required site-wide for WebContainers (SharedArrayBuffer)
-- WebContainer boot is async, ~2-5s cold start
-- JSZip extracts ZIP client-side → converts to WebContainer FileSystemTree
-- Next.js projects in WebContainer are heavy (~500MB); prioritize Vite/static first
+- `output: "export"` in next.config.ts for GitHub Pages static deploy
+- `basePath: /Code-Universum` for GitHub Pages subpath
+- COOP/COEP headers defined but NOT applied in static export (need Vercel for WebContainers)
+- `isSupabaseConfigured` flag guards all DB calls — site renders without backend
+- Placeholder Supabase client prevents crash when env vars missing
+- GitHub Actions workflow reads secrets for build-time env vars
+- All `<a>` replaced with Next.js `<Link>` for basePath support
 
-## Component Inventory
-- [ ] GlassCard — glassmorphism card primitive
-- [ ] NeonButton — neon-accented CTA button
-- [ ] CodeBlock — syntax-highlighted code (shiki)
-- [ ] TagBadge — tag pill component
-- [ ] Header — main navigation
-- [ ] Sidebar — tag filter sidebar
-- [ ] SnippetPreview — iframe srcdoc for HTML/CSS
-- [ ] WebContainerPreview — full site preview
-- [ ] PreviewToolbar — dark/light toggle, copy, fullscreen
-- [ ] ComponentUploadForm — multi-step snippet upload
-- [ ] SiteUploadForm — ZIP upload with drag-and-drop
-- [ ] FileDropzone — reusable file drop area
-- [ ] ComponentCard — browse grid item
-- [ ] SiteCard — browse grid item for full sites
+## Mobile Responsiveness (Phase 2)
+- Hamburger menu with AnimatePresence fullscreen overlay
+- All touch targets min 44px (h-10, h-12 buttons)
+- Stats grid: 1 col mobile, 3 col desktop
+- Component grid: 1 col mobile, 2/3/4 col responsive
+- Reduced padding on mobile (px-4 sm:px-6, py-6 sm:py-8)
+- Hero title: text-3xl mobile, text-5xl sm, text-7xl md, text-8xl lg
+- Legal pages: reduced spacing on mobile
+- Upload forms: reduced min-heights and padding on mobile
 
 ## Implementation Progress
 - [x] Architecture plan approved
@@ -63,9 +73,16 @@ Last updated: 2026-03-28
 - [x] COOP/COEP headers configured
 - [x] Tailwind v4 dark glassmorphism theme
 - [x] Folder structure created
-- [ ] Auth flow (GitHub OAuth)
-- [ ] Design system primitives (GlassCard, NeonButton, CodeBlock)
-- [ ] Component upload flow
-- [ ] Full-site upload + WebContainer preview
-- [ ] Browse/discovery page
-- [ ] Pre-commit security hooks
+- [x] GitHub Actions deploy workflow
+- [x] Real auth flow (GitHub OAuth via Supabase)
+- [x] Real component upload form with live preview
+- [x] Real ZIP site upload with security scan
+- [x] Real browse pages (DB queries, tag filters, likes)
+- [x] Legal pages (Terms, Privacy, Impressum)
+- [x] SETUP.md guide for Supabase + GitHub setup
+- [x] Graceful degradation without Supabase
+- [x] Mobile-first responsive design (all pages)
+- [ ] WebContainer live preview for full sites
+- [ ] User profile page
+- [ ] Search functionality
+- [ ] Code syntax highlighting (shiki)

@@ -69,11 +69,11 @@ export default function BrowseComponentsPage() {
   }, []);
 
   return (
-    <main className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full">
+    <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--cu-text-primary)] mb-2">Components</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--cu-text-primary)] mb-1 sm:mb-2">Components</h1>
             <p className="text-sm text-[var(--cu-text-secondary)]">
               Open-source UI elements — copy the code with one click
             </p>
@@ -117,7 +117,7 @@ export default function BrowseComponentsPage() {
 
         {/* Loading state */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="glass overflow-hidden animate-pulse">
                 <div className="h-44 bg-[var(--cu-surface)]" />
@@ -145,7 +145,7 @@ export default function BrowseComponentsPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {components.map((item, i) => (
               <ComponentCard key={item.id} item={item} index={i} />
             ))}

@@ -101,7 +101,7 @@ export default function Home() {
 
       <div className="relative z-10">
         {/* ======== HERO ======== */}
-        <section className="relative pt-20 pb-16 sm:pt-32 sm:pb-24 px-6">
+        <section className="relative pt-12 pb-10 sm:pt-32 sm:pb-24 px-4 sm:px-6">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -113,7 +113,7 @@ export default function Home() {
                 Open Source — MIT Licensed
               </div>
 
-              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.95] mb-6">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.95] mb-4 sm:mb-6">
                 <span className="bg-gradient-to-r from-[var(--cu-neon-cyan)] via-[var(--cu-neon-purple)] to-[var(--cu-neon-pink)] bg-clip-text text-transparent">
                   Share Your
                 </span>
@@ -123,7 +123,7 @@ export default function Home() {
                 <span className="text-[var(--cu-text-primary)]">World</span>
               </h1>
 
-              <p className="max-w-xl mx-auto text-base sm:text-lg text-[var(--cu-text-secondary)] leading-relaxed mb-10">
+              <p className="max-w-xl mx-auto text-sm sm:text-base md:text-lg text-[var(--cu-text-secondary)] leading-relaxed mb-6 sm:mb-10 px-2">
                 Upload UI components and full websites. Preview them live in the browser.
                 Copy the code with a single click — free and open source.
               </p>
@@ -175,8 +175,8 @@ export default function Home() {
         </section>
 
         {/* ======== STATS (real from DB) ======== */}
-        <section className="px-6 pb-16 sm:pb-20">
-          <div className="max-w-3xl mx-auto grid grid-cols-3 gap-4 sm:gap-6">
+        <section className="px-4 sm:px-6 pb-10 sm:pb-20">
+          <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
             {[
               { label: "Components", value: stats.components, accent: "var(--cu-neon-cyan)" },
               { label: "Full Sites", value: stats.sites, accent: "var(--cu-neon-purple)" },
@@ -203,7 +203,7 @@ export default function Home() {
 
         {/* ======== RECENT COMPONENTS (real from DB) ======== */}
         {recentComponents.length > 0 && (
-          <section className="px-6 pb-24">
+          <section className="px-4 sm:px-6 pb-16 sm:pb-24">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xl sm:text-2xl font-bold text-[var(--cu-text-primary)]">
@@ -216,7 +216,7 @@ export default function Home() {
                   </svg>
                 </Link>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                 {recentComponents.map((item, i) => {
                   const srcdoc = `<!DOCTYPE html><html><head><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#f0f0f5;font-family:system-ui,sans-serif}${item.code_css || ""}</style>${item.code_tailwind ? '<script src="https://cdn.tailwindcss.com"></script>' : ""}</head><body>${item.code_html || item.code_tailwind || ""}</body></html>`;
 
@@ -255,13 +255,13 @@ export default function Home() {
 
         {/* ======== EMPTY STATE (when no DB) ======== */}
         {recentComponents.length === 0 && (
-          <section className="px-6 pb-24">
+          <section className="px-4 sm:px-6 pb-16 sm:pb-24">
             <div className="max-w-3xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="glass p-10 sm:p-16 text-center relative overflow-hidden"
+                className="glass p-6 sm:p-10 md:p-16 text-center relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-[rgba(0,240,255,0.03)] to-[rgba(168,85,247,0.03)]" />
                 <div className="relative">
@@ -294,14 +294,14 @@ export default function Home() {
         )}
 
         {/* ======== FOOTER ======== */}
-        <footer className="border-t border-[var(--cu-border)] px-6 py-8">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <footer className="border-t border-[var(--cu-border)] px-4 sm:px-6 py-6 sm:py-8">
+          <div className="max-w-7xl mx-auto flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
             <div className="text-sm text-[var(--cu-text-muted)]">
               <span className="neon-text-cyan font-bold">Code</span>{" "}
               <span className="text-[var(--cu-text-primary)] font-bold">Universum</span>
               <span className="ml-2">&copy; {new Date().getFullYear()} — MIT Licensed</span>
             </div>
-            <div className="flex items-center gap-6 text-xs text-[var(--cu-text-muted)]">
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-[var(--cu-text-muted)]">
               <Link href="/components" className="hover:text-[var(--cu-text-secondary)] transition-colors">Components</Link>
               <Link href="/sites" className="hover:text-[var(--cu-text-secondary)] transition-colors">Sites</Link>
               <Link href="/terms" className="hover:text-[var(--cu-text-secondary)] transition-colors">Terms</Link>
