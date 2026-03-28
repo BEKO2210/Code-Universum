@@ -31,7 +31,7 @@ export function Header() {
       <motion.header
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-50 glass-subtle border-b border-[var(--cu-border)]"
+        className="sticky top-0 z-50 border-b border-[var(--cu-border)] bg-[var(--cu-bg-primary)]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[var(--cu-bg-primary)]/60"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
           {/* Logo */}
