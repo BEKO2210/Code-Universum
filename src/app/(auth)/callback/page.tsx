@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 export default function AuthCallbackPage() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -78,12 +77,12 @@ export default function AuthCallbackPage() {
             />
           </svg>
           <p className="text-sm text-red-400">{error}</p>
-          <a
-            href={(process.env.NEXT_PUBLIC_BASE_PATH || "") + "/login"}
+          <Link
+            href="/login"
             className="inline-flex items-center h-10 px-6 rounded-xl border border-[var(--cu-neon-cyan)] text-[var(--cu-neon-cyan)] text-sm font-medium"
           >
             Try Again
-          </a>
+          </Link>
         </div>
       </main>
     );

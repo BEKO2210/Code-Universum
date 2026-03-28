@@ -40,18 +40,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event: string, session: { user: { id: string } } | null) => {
-      if (event === "SIGNED_IN" && session?.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
-        setUser(profile);
-      } else if (event === "SIGNED_OUT") {
-        setUser(null);
+    } = supabase.auth.onAuthStateChange(
+      async (_event: string, session: { user: { id: string } } | null) => {
+        try {
+          if (session?.user) {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("*")
+              .eq("id", session.user.id)
+              .single();
+            setUser(profile);
+          } else {
+            setUser(null);
+          }
+        } catch {
+          setUser(null);
+        }
       }
-    });
+    );
 
     return () => subscription.unsubscribe();
   }, [setUser, setLoading]);
