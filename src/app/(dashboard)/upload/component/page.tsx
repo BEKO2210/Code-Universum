@@ -325,6 +325,7 @@ ${codeJs ? `<script>${codeJs}<\/script>` : ""}</body></html>`;
                     sandbox="allow-scripts"
                     className="absolute inset-0 w-full h-full border-0"
                     title="Preview"
+                    aria-hidden="true"
                   />
                 </div>
               </div>

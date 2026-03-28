@@ -1,6 +1,6 @@
 # Code-Universum — Project Memory
 
-## Status: Phase 3 — SEO & Lighthouse Optimized, Production-Ready
+## Status: Phase 4 — Final QA Audit Complete
 Last updated: 2026-03-28
 
 ## Architecture Decisions
@@ -87,10 +87,24 @@ Last updated: 2026-03-28
 - [x] PWA manifest, favicon.svg, apple-touch-icon, og-image
 - [x] Per-page metadata (unique title/description/canonical on every route)
 - [x] Accessibility: focus-visible, skip-to-content, reduced-motion, 4.5:1 contrast
+- [x] Component Detail Modal (click card -> code tabs, live preview)
+- [x] QA Audit: removed dead server-side files, security verified
 - [ ] WebContainer live preview for full sites
 - [ ] User profile page
 - [ ] Search functionality
 - [ ] Code syntax highlighting (shiki)
+
+## QA Audit (Phase 4) — Bugs Found & Fixed
+| Zone | Bug | Severity | Fix |
+|---|---|---|---|
+| 1 | server.ts uses cookies() — crashes on static export | CRITICAL | Deleted file (unused) |
+| 1 | middleware.ts uses NextRequest — crashes on static export | CRITICAL | Deleted file (unused) |
+| 1 | Auth callback redirect missing origin | HIGH | Added window.location.origin |
+| 2 | Modal z-index vs Header | OK | Modal z-[100] > Header z-50 |
+| 2 | Scroll lock cleanup | OK | useEffect cleanup in both modal and header |
+| 3 | Iframe sandbox | OK | All use sandbox="allow-scripts" only (no allow-same-origin) |
+| 3 | Missing aria-hidden on iframes | LOW | Added to upload preview + modal preview |
+| 4 | Hydration mismatches | OK | All window/document access inside useEffect or handlers |
 
 ## SEO & Lighthouse Decisions (Phase 3)
 | What | Choice | Why |
