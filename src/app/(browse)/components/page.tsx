@@ -5,10 +5,24 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
-import type { Tag, Component, Profile } from "@/types";
+import type { Tag, Profile } from "@/types";
 import { ComponentDetailModal } from "@/components/preview/component-detail-modal";
 
-interface ComponentRow extends Component {
+interface ComponentRow {
+  id: string;
+  title: string;
+  description: string | null;
+  code_html: string | null;
+  code_css: string | null;
+  code_js: string | null;
+  code_tailwind: string | null;
+  framework: string;
+  likes_count: number;
+  views_count: number;
+  is_public: boolean;
+  is_full_page?: boolean;
+  author_id: string;
+  created_at: string;
   profiles: Pick<Profile, "username" | "avatar_url">;
   component_tags: { tags: Pick<Tag, "id" | "name" | "slug"> }[];
 }
@@ -28,7 +42,7 @@ export default function BrowseComponentsPage() {
 
     let query = supabase
       .from("components")
-      .select("*, profiles!components_author_id_fkey(username, avatar_url), component_tags(tags(id, name, slug))")
+      .select("id, title, description, code_html, code_css, code_js, code_tailwind, framework, likes_count, views_count, is_public, author_id, created_at, profiles!components_author_id_fkey(username, avatar_url), component_tags(tags(id, name, slug))")
       .eq("is_public", true)
       .order("created_at", { ascending: false })
       .limit(30);

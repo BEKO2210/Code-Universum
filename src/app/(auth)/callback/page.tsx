@@ -12,25 +12,21 @@ export default function AuthCallbackPage() {
     const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
     const home = window.location.origin + base + "/";
 
-    // Listen for the auth event — Supabase SDK automatically detects
-    // hash fragments (#access_token=...) and code params (?code=...)
-    // from the URL and processes them internally
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event: string) => {
         if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-          // Auth succeeded — redirect to homepage
-          window.location.replace(home);
-        }
-        if (event === "SIGNED_OUT") {
-          setError("Authentication failed. Please try again.");
+          // Wait for Supabase to persist session to localStorage
+          setTimeout(() => {
+            window.location.replace(home);
+          }, 500);
         }
       }
     );
 
-    // Fallback: if nothing happens after 8 seconds, show error
+    // Fallback: if nothing happens after 10 seconds, show error
     const timeout = setTimeout(() => {
       setError("Authentication timed out. Please try again.");
-    }, 8000);
+    }, 10000);
 
     return () => {
       subscription.unsubscribe();
