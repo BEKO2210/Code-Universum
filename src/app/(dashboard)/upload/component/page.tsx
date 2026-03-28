@@ -6,7 +6,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
-import { Header } from "@/components/layout/header";
 import type { Tag, Framework } from "@/types";
 
 const FRAMEWORKS: { value: Framework; label: string }[] = [
@@ -122,9 +121,7 @@ ${codeJs ? `<script>${codeJs}</script>` : ""}</body></html>`;
   // Not logged in
   if (!user) {
     return (
-      <>
-        <Header />
-        <main className="flex flex-1 items-center justify-center px-6 py-20">
+        <main className="flex flex-1 items-center justify-center px-4 sm:px-6 py-12 sm:py-20">
           <div className="glass p-8 text-center max-w-sm">
             <h2 className="text-xl font-bold mb-3 text-[var(--cu-text-primary)]">
               Sign in required
@@ -140,13 +137,10 @@ ${codeJs ? `<script>${codeJs}</script>` : ""}</body></html>`;
             </Link>
           </div>
         </main>
-      </>
     );
   }
 
   return (
-    <>
-      <Header />
       <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -321,6 +315,5 @@ ${codeJs ? `<script>${codeJs}</script>` : ""}</body></html>`;
           </div>
         </motion.div>
       </main>
-    </>
   );
 }
