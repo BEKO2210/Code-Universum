@@ -130,7 +130,7 @@ export default function BrowseComponentsPage() {
           </div>
         ) : components.length === 0 ? (
           <div className="text-center py-20">
-            <div className="text-4xl mb-4">&#128640;</div>
+            <svg className="w-12 h-12 mx-auto mb-4 text-[var(--cu-neon-cyan)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" /></svg>
             <h2 className="text-lg font-semibold text-[var(--cu-text-primary)] mb-2">
               No components yet
             </h2>
