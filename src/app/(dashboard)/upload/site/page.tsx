@@ -6,7 +6,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
-import { Header } from "@/components/layout/header";
 import { scanZipFile } from "@/lib/utils/security";
 import type { Tag } from "@/types";
 
@@ -121,22 +120,17 @@ export default function UploadSitePage() {
 
   if (!user) {
     return (
-      <>
-        <Header />
-        <main className="flex flex-1 items-center justify-center px-6 py-20">
-          <div className="glass p-8 text-center max-w-sm">
+        <main className="flex flex-1 items-center justify-center px-4 sm:px-6 py-12 sm:py-20">
+          <div className="glass p-6 sm:p-8 text-center max-w-sm w-full">
             <h2 className="text-xl font-bold mb-3 text-[var(--cu-text-primary)]">Sign in required</h2>
             <p className="text-sm text-[var(--cu-text-secondary)] mb-6">You need to sign in to upload sites.</p>
             <Link href="/login" className="inline-flex items-center h-10 px-6 rounded-xl border border-[var(--cu-neon-cyan)] text-[var(--cu-neon-cyan)] text-sm font-medium">Sign In</Link>
           </div>
         </main>
-      </>
     );
   }
 
   return (
-    <>
-      <Header />
       <main className="flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <h1 className="text-2xl font-bold text-[var(--cu-text-primary)] mb-8">Upload Full Site</h1>
@@ -264,6 +258,5 @@ export default function UploadSitePage() {
           </div>
         </motion.div>
       </main>
-    </>
   );
 }
