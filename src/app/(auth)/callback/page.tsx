@@ -29,7 +29,7 @@ export default function AuthCallbackPage() {
             setError(sessionError.message);
             return;
           }
-          window.location.href =
+          window.location.href = window.location.origin +
             (process.env.NEXT_PUBLIC_BASE_PATH || "") + "/";
           return;
         }
@@ -45,7 +45,7 @@ export default function AuthCallbackPage() {
             setError(exchangeError.message);
             return;
           }
-          window.location.href =
+          window.location.href = window.location.origin +
             (process.env.NEXT_PUBLIC_BASE_PATH || "") + "/";
           return;
         }
