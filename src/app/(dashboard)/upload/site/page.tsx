@@ -186,7 +186,7 @@ export default function UploadSitePage() {
               />
               {file ? (
                 <div>
-                  <div className="text-[var(--cu-neon-green)] text-3xl mb-2">&#10003;</div>
+                  <svg className="w-10 h-10 mx-auto mb-2 text-[var(--cu-neon-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   <p className="text-sm font-medium text-[var(--cu-text-primary)]">{file.name}</p>
                   <p className="text-xs text-[var(--cu-text-muted)] mt-1">
                     {(file.size / 1024 / 1024).toFixed(2)} MB

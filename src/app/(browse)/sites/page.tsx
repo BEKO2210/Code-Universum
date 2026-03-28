@@ -73,7 +73,7 @@ export default function BrowseSitesPage() {
           </div>
         ) : sites.length === 0 ? (
           <div className="text-center py-20">
-            <div className="text-4xl mb-4">&#127760;</div>
+            <svg className="w-12 h-12 mx-auto mb-4 text-[var(--cu-neon-purple)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" /></svg>
             <h2 className="text-lg font-semibold text-[var(--cu-text-primary)] mb-2">No sites yet</h2>
             <p className="text-sm text-[var(--cu-text-secondary)] mb-6">Upload a ZIP file to share a full website project!</p>
             <Link
