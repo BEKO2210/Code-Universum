@@ -136,6 +136,7 @@ ${codeTailwind ? '<script src="https://cdn.tailwindcss.com"><\/script>' : ""}
                   sandbox="allow-scripts"
                   className="w-full h-full border-0"
                   title={`Preview: ${title}`}
+                  aria-hidden="true"
                 />
               </div>
 

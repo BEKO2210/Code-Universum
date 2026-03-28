@@ -83,7 +83,7 @@ export default function ImpressumPage() {
             <h2 className="text-lg font-semibold text-[var(--cu-text-primary)] mb-3">Lizenz</h2>
             <div className="glass-subtle p-4 font-mono text-xs text-[var(--cu-text-muted)]">
               <p>MIT License</p>
-              <p className="mt-2">Copyright &copy; {new Date().getFullYear()} Belkis Aslani</p>
+              <p className="mt-2">Copyright &copy; 2026 Belkis Aslani</p>
               <p className="mt-2">Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
               <p className="mt-2">The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
               <p className="mt-2">THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</p>

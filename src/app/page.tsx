@@ -443,7 +443,7 @@ export default function Home() {
             <div className="text-sm text-[var(--cu-text-muted)]">
               <span className="neon-text-cyan font-bold">Code</span>{" "}
               <span className="text-[var(--cu-text-primary)] font-bold">Universum</span>
-              <span className="ml-2">&copy; {new Date().getFullYear()} Belkis Aslani &middot; MIT Licensed</span>
+              <span className="ml-2">&copy; 2026 Belkis Aslani &middot; MIT Licensed</span>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-[var(--cu-text-muted)]">
               <Link href="/components" className="hover:text-[var(--cu-text-secondary)] transition-colors">Components</Link>
